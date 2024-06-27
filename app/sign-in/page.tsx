@@ -1,14 +1,13 @@
-import SignInBtns from "@/components/SignInBtns";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
+import SignInBtns from '@/components/SignInBtns'
+import { redirect } from 'next/navigation'
+import { authOptions } from '../api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth/next'
 
-export default async function SignIn() {
-  const session = await getServerSession(authOptions);
-
+export default async function SignInPage() {
+  const session = await getServerSession(authOptions)
   if (session) {
-    redirect("/dashboard");
+    redirect('/dashboard')
   }
 
-  return <SignInBtns />;
+  return <SignInBtns />
 }

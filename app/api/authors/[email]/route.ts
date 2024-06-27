@@ -1,22 +1,21 @@
-import { NextResponse } from "next/server";
-import prisma from "@/lib/prismadb";
+import prisma from '@/lib/prismadb'
+import { NextResponse } from 'next/server'
 
 export async function GET(
   req: Request,
   { params }: { params: { email: string } }
 ) {
   try {
-    const email = params.email;
+    const email = params.email
     const posts = await prisma.user.findUnique({
       where: { email },
       include: {
-        posts: { orderBy: { createdAt: "desc" } },
+        posts: { orderBy: { createdAt: 'desc' } },
       },
-    });
-
-    return NextResponse.json(posts);
+    })
+    return NextResponse.json(posts)
   } catch (error) {
-    console.log(error);
-    return NextResponse.json({ message: "Could not fetch post" });
+    console.log(error)
+    return NextResponse.json({ message: 'Could not fetch post' })
   }
 }

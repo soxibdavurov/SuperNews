@@ -1,44 +1,42 @@
-"use client";
+'use client'
 
-import { TCategory, TPost } from "@/app/types";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { CldUploadButton, CldUploadWidgetResults } from "next-cloudinary";
-import Image from "next/image";
-import toast from "react-hot-toast";
+import { TCategory, TPost } from '@/app/types'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
+import { CldUploadButton, CldUploadWidgetResults } from 'next-cloudinary'
+import Image from 'next/image'
+import toast from 'react-hot-toast'
 
 export default function EditPostForm({ post }: { post: TPost }) {
-  const [links, setLinks] = useState<string[]>([]);
-  const [linkInput, setLinkInput] = useState("");
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [categories, setCategories] = useState<TCategory[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
-  const [publicId, setPublicId] = useState("");
+  const [links, setLinks] = useState<string[]>([])
+  const [linkInput, setLinkInput] = useState('')
+  const [title, setTitle] = useState('')
+  const [content, setContent] = useState('')
+  const [categories, setCategories] = useState<TCategory[]>([])
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [publicId, setPublicId] = useState('')
 
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
     const fetchAllCategories = async () => {
-      const res = await fetch("/api/categories");
-      const catNames = await res.json();
-      setCategories(catNames);
-    };
-
-    fetchAllCategories();
+      const res = await fetch('/api/categories')
+      const catNames = await res.json()
+      setCategories(catNames)
+    }
+    fetchAllCategories()
 
     const initValues = () => {
-      setTitle(post.title);
-      setContent(post.content);
-      setImageUrl(post.imageUrl || "");
-      setPublicId(post.publicId || "");
-      setSelectedCategory(post.catName || "");
-      setLinks(post.links || []);
-    };
-
-    initValues();
+      setTitle(post.title)
+      setContent(post.content)
+      setImageUrl(post.imageUrl || '')
+      setPublicId(post.publicId || '')
+      setSelectedCategory(post.catName || '')
+      setLinks(post.links || [])
+    }
+    initValues()
   }, [
     post.title,
     post.content,
@@ -46,65 +44,65 @@ export default function EditPostForm({ post }: { post: TPost }) {
     post.publicId,
     post.catName,
     post.links,
-  ]);
-
-  const addLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-    e.preventDefault();
-    if (linkInput.trim() !== "") {
-      setLinks((prev) => [...prev, linkInput]);
-      setLinkInput("");
-    }
-  };
-
-  const deleteLink = (index: number) => {
-    setLinks((prev) => prev.filter((_, i) => i !== index));
-  };
+  ])
 
   const handleImageUpload = (result: CldUploadWidgetResults) => {
-    const info = result.info as object;
+    const info = result.info as object
 
-    if ("secure_url" in info && "public_id" in info) {
-      const url = info.secure_url as string;
-      const public_id = info.public_id as string;
-      setImageUrl(url);
-      setPublicId(public_id);
-      console.log("url: ", url);
-      console.log("public_id: ", public_id);
+    if ('secure_url' in info && 'public_id' in info) {
+      const url = info.secure_url as string
+      const public_id = info.public_id as string
+      setImageUrl(url)
+      setPublicId(public_id)
+      console.log('Url: ', url)
+      console.log('Public_id: ', public_id)
     }
-  };
+  }
 
   const removeImage = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     try {
-      const res = await fetch("/api/removeImage", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+      const res = await fetch('/api/removeImage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ publicId }),
-      });
+      })
 
       if (res.ok) {
-        setImageUrl("");
-        setPublicId("");
+        setImageUrl('')
+        setPublicId('')
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
+  }
+
+  const addLink = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault()
+    if (linkInput.trim() !== '') {
+      setLinks((prev) => [...prev, linkInput])
+      setLinkInput('')
+    }
+  }
+
+  const deleteLink = (index: number) => {
+    setLinks((prev) => prev.filter((_, i) => i !== index))
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!title || !content) {
-      toast.error("Title and content are required");
-      return;
+      toast.error('Title and content are required')
+      return
     }
 
     try {
       const res = await fetch(`/api/posts/${post.id}`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           title,
@@ -114,58 +112,54 @@ export default function EditPostForm({ post }: { post: TPost }) {
           imageUrl,
           publicId,
         }),
-      });
-
+      })
       if (res.ok) {
-        toast.success("Post edited successfully");
-        router.push("/dashboard");
-        router.refresh();
+        toast.success('Post updated successfully')
+        router.push('/dashboard')
+        router.refresh()
       }
     } catch (error) {
-      toast.error("Something went wrong");
-      console.log(error);
+      toast.error('Something went wrong')
     }
-  };
+  }
 
   return (
     <div>
-      <h2>Create Post</h2>
+      <h2>Edit Post</h2>
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         <input
-          onChange={(e) => setTitle(e.target.value)}
           type="text"
-          placeholder="Title"
+          placeholder="title"
           value={title}
+          onChange={(e) => setTitle(e.target.value)}
         />
         <textarea
-          onChange={(e) => setContent(e.target.value)}
           placeholder="Content"
           value={content}
+          onChange={(e) => setContent(e.target.value)}
         ></textarea>
 
         {links &&
           links.map((link, i) => (
-            <div key={i} className="flex items-center gap-4">
+            <div key={i} className="flex gap-4 items-center">
               <span>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  className="w-5 h-5"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
-                  />
+                  <path d="M12.232 4.232a2.5 2.5 0 013.536 3.536l-1.225 1.224a.75.75 0 001.061 1.06l1.224-1.224a4 4 0 00-5.656-5.656l-3 3a4 4 0 00.225 5.865.75.75 0 00.977-1.138 2.5 2.5 0 01-.142-3.667l3-3z" />
+                  <path d="M11.603 7.963a.75.75 0 00-.977 1.138 2.5 2.5 0 01.142 3.667l-3 3a2.5 2.5 0 01-3.536-3.536l1.225-1.224a.75.75 0 00-1.061-1.06l-1.224 1.224a4 4 0 105.656 5.656l3-3a4 4 0 00-.225-5.865z" />
                 </svg>
               </span>
               <Link className="link" href={link}>
                 {link}
               </Link>
-              <span className="cursor-pointer" onClick={() => deleteLink(i)}>
+              <span
+                className="cursor-pointer text-red-800"
+                onClick={() => deleteLink(i)}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -183,7 +177,6 @@ export default function EditPostForm({ post }: { post: TPost }) {
               </span>
             </div>
           ))}
-
         <div className="flex gap-2">
           <input
             className="flex-1"
@@ -209,9 +202,7 @@ export default function EditPostForm({ post }: { post: TPost }) {
 
         <CldUploadButton
           uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET}
-          className={`h-48 border-2 mt-4 border-dotted grid place-items-center bg-slate-100 rounded-md relative ${
-            imageUrl && "pointer-events-none"
-          }`}
+          className="h-48 border-2 mt-4 border-dotted grid place-items-center bg-slate-100 rounded-md relative"
           onUpload={handleImageUpload}
         >
           <div>
@@ -230,7 +221,6 @@ export default function EditPostForm({ post }: { post: TPost }) {
               />
             </svg>
           </div>
-
           {imageUrl && (
             <Image
               src={imageUrl}
@@ -255,19 +245,23 @@ export default function EditPostForm({ post }: { post: TPost }) {
           className="p-3 rounded-md border appearance-none"
           value={selectedCategory}
         >
-          <option value="">Select A Category</option>
+          <option>Select a category</option>
           {categories &&
             categories.map((category) => (
-              <option key={category.id} value={category.catName}>
+              <option
+                className="py-2"
+                key={category.id}
+                value={category.catName}
+              >
                 {category.catName}
               </option>
             ))}
         </select>
 
-        <button className="primary-btn" type="submit">
+        <button type="submit" className="primary-btn">
           Update Post
         </button>
       </form>
     </div>
-  );
+  )
 }

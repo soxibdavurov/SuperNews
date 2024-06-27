@@ -1,52 +1,52 @@
-"use client";
-
-import Link from "next/link";
-import { useSession, signOut } from "next-auth/react";
-import Image from "next/image";
-import { useState, useRef, useEffect } from "react";
+'use client'
+import Link from 'next/link'
+import { useSession, signOut } from 'next-auth/react'
+import Image from 'next/image'
+import { useEffect, useRef, useState } from 'react'
 
 export default function Navbar() {
-  const { status, data: session } = useSession();
-  const [isPopupVisible, setIsPopupVisible] = useState(false);
-  const popupRef = useRef<HTMLDivElement | null>(null);
+  const { status, data: session } = useSession()
+  const [isPopupVisible, setIsPopupVisible] = useState(false)
+  const popupRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (popupRef.current && !popupRef.current.contains(e.target as Node)) {
-        setIsPopupVisible(false);
+        setIsPopupVisible(false)
       }
-    };
+    }
 
-    document.addEventListener("click", handleClickOutside);
+    document.addEventListener('click', handleClickOutside)
 
     if (!isPopupVisible) {
-      document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener('click', handleClickOutside)
     }
 
     return () => {
-      document.removeEventListener("click", handleClickOutside);
-    };
-  }, [isPopupVisible]);
+      document.removeEventListener('click', handleClickOutside)
+    }
+  }, [isPopupVisible])
 
   return (
     <div className="flex justify-between pb-4 border-b mb-4 relative">
       <div>
-        <Link href={"/"}>
+        <Link href="/">
           <h1 className="text-dark text-4xl font-bold tracking-tighter">
-          SuperNews
+            Tech News
           </h1>
         </Link>
         <p className="text-sm">
-          Exploring Tomorrow&apos;s Innovations, <br /> One Byte at a Time.
+          Exporing Tomorrows Innovations, <br />
+          One Byte at a time.
         </p>
       </div>
 
-      {status === "authenticated" ? (
+      {status === 'authenticated' ? (
         <>
           <div
             ref={popupRef}
-            className={`absolute z-30 right-0 top-20 bg-white p-6 shadow-lg rounded-md flex-col gap-2 text-right min-w-[160px] ${
-              isPopupVisible ? "flex" : "hidden"
+            className={`absolute z-30 right-0 top-20 bg-yellow-100 p-6 shadow-lg rounded-md flex-col gap-2 text-right min-w-[160px] ${
+              isPopupVisible ? 'flex' : 'hidden'
             }`}
           >
             <div className="font-bold">{session?.user?.name}</div>
@@ -54,14 +54,14 @@ export default function Navbar() {
             <Link
               onClick={() => setIsPopupVisible(false)}
               className="hover:underline"
-              href={"/dashboard"}
+              href="/dashboard"
             >
               Dashboard
             </Link>
             <Link
               onClick={() => setIsPopupVisible(false)}
               className="hover:underline"
-              href={"/create-post"}
+              href="/create-post"
             >
               Create Post
             </Link>
@@ -73,7 +73,7 @@ export default function Navbar() {
           <div className="flex gap-2 items-center">
             <Link
               className="hidden md:flex gap-2 items-center mr-6"
-              href={"/create-post"}
+              href={'/create-post'}
             >
               <span>
                 <svg
@@ -91,13 +91,13 @@ export default function Navbar() {
                   />
                 </svg>
               </span>
-              <span>Create new</span>
+              <span>Create New</span>
             </Link>
             <Image
-              src={session?.user?.image || ""}
+              src={session?.user?.image || ''}
               width={36}
               height={36}
-              alt="Profile Image"
+              alt="Profile image"
               className="rounded-full cursor-pointer"
               onClick={() => setIsPopupVisible((prev) => !prev)}
             />
@@ -105,11 +105,11 @@ export default function Navbar() {
         </>
       ) : (
         <div className="flex items-center">
-          <Link className="btn" href={"/sign-in"}>
+          <Link className="btn" href={'/sign-in'}>
             Sign In
           </Link>
         </div>
       )}
     </div>
-  );
+  )
 }

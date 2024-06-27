@@ -1,31 +1,30 @@
-import Post from "@/components/Post";
-import Link from "next/link";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
-import { TPost } from "../types";
+import Post from '@/components/Post'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { authOptions } from '../api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth/next'
+import { TPost } from '../types'
 
 const getPosts = async (email: string) => {
   try {
-    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/authors/${email}`);
-    const { posts } = await res.json();
-    return posts;
+    const res = await fetch(`${process.env.NEXTAUTH_URL}/api/authors/${email}`)
+    const { posts } = await res.json()
+    return posts
   } catch (error) {
-    return null;
+    return null
   }
-};
+}
 
-export default async function Dashboard() {
-  const session = await getServerSession(authOptions);
-  const email = session?.user?.email;
-  let posts = [];
-
+export default async function DashboardPage() {
+  const session = await getServerSession(authOptions)
+  const email = session?.user?.email
+  let posts = []
   if (!session) {
-    redirect("/sign-in");
+    redirect('/sign-in')
   }
 
   if (email) {
-    posts = await getPosts(email);
+    posts = await getPosts(email)
   }
 
   return (
@@ -37,7 +36,7 @@ export default async function Dashboard() {
           <Post
             key={post.id}
             id={post.id}
-            author={""}
+            author={''}
             authorEmail={post.authorEmail}
             date={post.createdAt}
             thumbnail={post.imageUrl}
@@ -48,13 +47,13 @@ export default async function Dashboard() {
           />
         ))
       ) : (
-        <div className="py-6">
-          No posts created yet.{" "}
-          <Link className="underline" href={"/create-post"}>
+        <div className="py-6 ">
+          No posts created yet.
+          <Link className="underline" href={'/create-post'}>
             Create New
           </Link>
         </div>
       )}
     </div>
-  );
+  )
 }

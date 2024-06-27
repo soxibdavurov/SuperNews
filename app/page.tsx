@@ -1,31 +1,29 @@
-import CategoriesList from "@/components/CategoriesList";
-import Post from "@/components/Post";
-import { TPost } from "./types";
+import CategoriesList from '@/components/CategoriesList'
+import Post from '@/components/Post'
+import { TPost } from './types'
 
 const getPosts = async (): Promise<TPost[] | null> => {
   try {
     const res = await fetch(`${process.env.NEXTAUTH_URL}/api/posts`, {
-      cache: "no-store",
-    });
-
+      cache: 'no-store',
+    })
     if (res.ok) {
-      const posts = await res.json();
-      return posts;
+      const posts = await res.json()
+      return posts
     }
   } catch (error) {
-    console.log(error);
+    console.log(error)
   }
-
-  return null;
-};
+  return null
+}
 
 export default async function Home() {
-  const posts = await getPosts();
+  const posts = await getPosts()
   return (
     <>
       <CategoriesList />
       {posts && posts.length > 0 ? (
-        posts.map((post: TPost) => (
+        posts.map((post) => (
           <Post
             key={post.id}
             id={post.id}
@@ -43,5 +41,5 @@ export default async function Home() {
         <div className="py-6">No posts to display</div>
       )}
     </>
-  );
+  )
 }

@@ -1,19 +1,19 @@
-import Image from "next/image";
-import Link from "next/link";
-import DeleteButton from "./DeleteButton";
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import Image from 'next/image'
+import Link from 'next/link'
+import DeleteButton from './DeleteButton'
+import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { getServerSession } from 'next-auth/next'
 
 interface PostProps {
-  id: string;
-  author: string;
-  date: string;
-  thumbnail?: string;
-  authorEmail?: string;
-  title: string;
-  content: string;
-  links?: string[];
-  category?: string;
+  id: string
+  author: string
+  date: string
+  thumbnail?: string
+  authorEmail?: string
+  title: string
+  content: string
+  links?: string[]
+  category?: string
 }
 
 export default async function Post({
@@ -27,54 +27,56 @@ export default async function Post({
   links,
   category,
 }: PostProps) {
-  const session = await getServerSession(authOptions);
+  const session = await getServerSession(authOptions)
+  const isEditable = session && session?.user?.email === authorEmail
 
-  const isEditable = session && session?.user?.email === authorEmail;
-
-  const dateObject = new Date(date);
+  const dateObject = new Date(date)
   const options: Intl.DateTimeFormatOptions = {
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-  };
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  }
 
-  const formattedDate = dateObject.toLocaleDateString("en-US", options);
+  const formattedDate = dateObject.toLocaleDateString('ko-KR', options)
 
   return (
     <div className="my-4 border-b border-b-300 py-8">
       <div className="mb-4">
         {author ? (
           <>
-            Posted by: <span className="font-bold">{author}</span> on{" "}
-            {formattedDate}
+            Posted by: <span className="font-bold">{author}</span> -
+            <span> {formattedDate} </span>
           </>
         ) : (
-          <>Posted on {formattedDate}</>
+          <>
+            Posted on <span> {formattedDate} </span>
+          </>
         )}
       </div>
-
       <div className="w-full h-72 relative">
         {thumbnail ? (
-          <Image
-            src={thumbnail}
-            alt={title}
-            fill
-            className="object-cover rounded-md object-center"
-          />
+          <Link href={thumbnail}>
+            <Image
+              src={thumbnail}
+              alt={title}
+              fill
+              className="object-cover object-center rounded-md"
+            />
+          </Link>
         ) : (
           <Image
-            src={"/thumbnail-placeholder.png"}
-            alt={title}
+            src="/thumbnail-placeholder.png"
+            alt="thumbnail placeholder"
             fill
-            className="object-cover rounded-md object-center"
+            className="object-cover object-center rounded-md"
           />
         )}
       </div>
 
       {category && (
         <Link
-          className="bg-slate-800 w-fit text-white px-4 py-0.5 text-sm font-bold rounded-md mt-4 block"
-          href={`categories/${category}`}
+          className="bg-slate-800 text-white w-fit px-4 py-0.5 text-sm font-bold rounded-md mt-4 block"
+          href={`/categories/${category}`}
         >
           {category}
         </Link>
@@ -84,7 +86,7 @@ export default async function Post({
       <p className="content">{content}</p>
 
       {links && (
-        <div className="my-4 flex flex-col gap-3">
+        <div className="flex flex-col gap-2 my-4">
           {links.map((link, i) => (
             <div key={i} className="flex gap-2 items-center">
               <svg
@@ -117,5 +119,5 @@ export default async function Post({
         </div>
       )}
     </div>
-  );
+  )
 }

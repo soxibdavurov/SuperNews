@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 .btn {
-  @apply bg-slate-200 px-4 py-2 rounded-md font-semibold hover:scale-105 transition;
+  @apply bg-slate-300 px-4 py-2 rounded-md font-semibold hover:scale-105 transition;
 }
 
 h1 {
@@ -19,7 +19,7 @@ p.content {
 }
 
 .link {
-  @apply text-[#7563DF] font-bold max-w-full overflow-hidden text-ellipsis;
+  @apply text-[#7563df] font-bold max-w-full overflow-hidden text-ellipsis;
 }
 
 .primary-btn {
